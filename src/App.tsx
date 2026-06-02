@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { Login } from './pages/Login'
 import { Register } from './pages/Register'
@@ -10,8 +10,9 @@ import { JoinRedirect } from './pages/JoinRedirect'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
+  const location = useLocation()
   if (loading) return <div className="min-h-screen bg-slate-900 flex items-center justify-center text-slate-400">Cargando...</div>
-  if (!user) return <Navigate to="/login" replace />
+  if (!user) return <Navigate to="/login" state={{ from: location.pathname }} replace />
   return <>{children}</>
 }
 

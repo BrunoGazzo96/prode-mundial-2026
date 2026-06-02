@@ -1,9 +1,11 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
 export function Login() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const from = (location.state as { from?: string })?.from ?? '/'
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -19,7 +21,7 @@ export function Login() {
       setError('Usuario o contraseña incorrectos')
       setLoading(false)
     } else {
-      navigate('/')
+      navigate(from, { replace: true })
     }
   }
 
@@ -64,7 +66,7 @@ export function Login() {
           </form>
           <p className="text-center text-sm text-slate-500 mt-4">
             ¿No tenés cuenta?{' '}
-            <Link to="/register" className="text-blue-400 hover:text-blue-300 font-medium">Registrate</Link>
+            <Link to="/register" state={{ from }} className="text-blue-400 hover:text-blue-300 font-medium">Registrate</Link>
           </p>
         </div>
       </div>

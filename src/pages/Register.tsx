@@ -1,9 +1,11 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
 export function Register() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const from = (location.state as { from?: string })?.from ?? '/'
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -28,7 +30,7 @@ export function Register() {
     if (!data.user) { setError('Error al crear la cuenta'); setLoading(false); return }
 
     await supabase.from('profiles').insert({ id: data.user.id, display_name: username.trim() })
-    navigate('/')
+    navigate(from, { replace: true })
   }
 
   return (
@@ -73,7 +75,7 @@ export function Register() {
           </form>
           <p className="text-center text-sm text-slate-500 mt-4">
             ¿Ya tenés cuenta?{' '}
-            <Link to="/login" className="text-blue-400 hover:text-blue-300 font-medium">Ingresá</Link>
+            <Link to="/login" state={{ from }} className="text-blue-400 hover:text-blue-300 font-medium">Ingresá</Link>
           </p>
         </div>
       </div>
