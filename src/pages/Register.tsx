@@ -4,37 +4,30 @@ import { supabase } from '../lib/supabase'
 
 export function Register() {
   const navigate = useNavigate()
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [displayName, setDisplayName] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
-    if (password.length < 6) { setError('La contraseña debe tener al menos 6 caracteres'); return }
-    if (!displayName.trim()) { setError('Ingresá un nombre'); return }
+    const user = username.trim().toLowerCase().replace(/\s+/g, '_')
+    if (!user) { setError('Ingresá un nombre de usuario'); return }
+    if (password.length < 4) { setError('La contraseña debe tener al menos 4 caracteres'); return }
     setLoading(true)
 
-    const { data, error: signUpError } = await supabase.auth.signUp({ email, password })
-    if (signUpError || !data.user) {
-      setError(signUpError?.message ?? 'Error al registrarse')
+    const fakeEmail = `${user}@prode.internal`
+    const { data, error: signUpError } = await supabase.auth.signUp({ email: fakeEmail, password })
+
+    if (signUpError) {
+      setError(signUpError.message.includes('already registered') ? 'Ese nombre ya está en uso' : 'Error al crear la cuenta')
       setLoading(false)
       return
     }
+    if (!data.user) { setError('Error al crear la cuenta'); setLoading(false); return }
 
-    const { error: profileError } = await supabase.from('profiles').insert({
-      id: data.user.id,
-      display_name: displayName.trim(),
-    })
-
-    if (profileError) {
-      setError('Error al guardar el perfil')
-      setLoading(false)
-      return
-    }
-
+    await supabase.from('profiles').insert({ id: data.user.id, display_name: username.trim() })
     navigate('/')
   }
 
@@ -51,22 +44,14 @@ export function Register() {
             <div className="text-sm text-red-400 bg-red-950/50 border border-red-800/50 rounded-lg px-3 py-2">{error}</div>
           )}
           <div>
-            <label className="block text-sm text-slate-300 mb-1.5">Nombre (para el prode)</label>
+            <label className="block text-sm text-slate-300 mb-1.5">Nombre de usuario</label>
             <input
               type="text" required
-              value={displayName} onChange={(e) => setDisplayName(e.target.value)}
+              value={username} onChange={(e) => setUsername(e.target.value)}
               className="w-full px-3 py-2.5 rounded-lg bg-slate-900 border border-slate-600 text-slate-200 focus:outline-none focus:border-emerald-500 text-sm"
-              placeholder="Ej: Bruno"
+              placeholder="Ej: Gonza"
               maxLength={30}
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-slate-300 mb-1.5">Email</label>
-            <input
-              type="email" required
-              value={email} onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-lg bg-slate-900 border border-slate-600 text-slate-200 focus:outline-none focus:border-emerald-500 text-sm"
-              placeholder="tu@email.com"
+              autoCapitalize="none"
             />
           </div>
           <div>
@@ -75,7 +60,7 @@ export function Register() {
               type="password" required
               value={password} onChange={(e) => setPassword(e.target.value)}
               className="w-full px-3 py-2.5 rounded-lg bg-slate-900 border border-slate-600 text-slate-200 focus:outline-none focus:border-emerald-500 text-sm"
-              placeholder="Mínimo 6 caracteres"
+              placeholder="Mínimo 4 caracteres"
             />
           </div>
           <button

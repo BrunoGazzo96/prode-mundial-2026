@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase'
 
 export function Login() {
   const navigate = useNavigate()
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -13,9 +13,10 @@ export function Login() {
     e.preventDefault()
     setError('')
     setLoading(true)
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const fakeEmail = `${username.trim().toLowerCase().replace(/\s+/g, '_')}@prode.internal`
+    const { error } = await supabase.auth.signInWithPassword({ email: fakeEmail, password })
     if (error) {
-      setError('Email o contraseña incorrectos')
+      setError('Usuario o contraseña incorrectos')
       setLoading(false)
     } else {
       navigate('/')
@@ -35,12 +36,13 @@ export function Login() {
             <div className="text-sm text-red-400 bg-red-950/50 border border-red-800/50 rounded-lg px-3 py-2">{error}</div>
           )}
           <div>
-            <label className="block text-sm text-slate-300 mb-1.5">Email</label>
+            <label className="block text-sm text-slate-300 mb-1.5">Nombre de usuario</label>
             <input
-              type="email" required
-              value={email} onChange={(e) => setEmail(e.target.value)}
+              type="text" required
+              value={username} onChange={(e) => setUsername(e.target.value)}
               className="w-full px-3 py-2.5 rounded-lg bg-slate-900 border border-slate-600 text-slate-200 focus:outline-none focus:border-emerald-500 text-sm"
-              placeholder="tu@email.com"
+              placeholder="Ej: Gonza"
+              autoCapitalize="none"
             />
           </div>
           <div>
