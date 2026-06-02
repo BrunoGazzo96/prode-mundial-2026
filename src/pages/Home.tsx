@@ -106,7 +106,7 @@ export function Home() {
                 type="text"
                 value={groupName}
                 onChange={(e) => setGroupName(e.target.value)}
-                placeholder="Nombre del grupo (ej: Los pibes)"
+                placeholder="Nombre del grupo (ej: Bebote empleado del Mes)"
                 maxLength={40}
                 className="input-field"
               />

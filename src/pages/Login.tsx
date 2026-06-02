@@ -47,7 +47,7 @@ export function Login() {
                 type="text" required
                 value={username} onChange={(e) => setUsername(e.target.value)}
                 className="input-field"
-                placeholder="Ej: Gonza"
+                placeholder="Ej: Fabicosw7"
                 autoCapitalize="none"
               />
             </div>
