@@ -14,7 +14,7 @@ export function Register() {
     setError('')
     const user = username.trim().toLowerCase().replace(/\s+/g, '_')
     if (!user) { setError('Ingresá un nombre de usuario'); return }
-    if (password.length < 4) { setError('La contraseña debe tener al menos 4 caracteres'); return }
+    if (password.length < 6) { setError('La contraseña debe tener al menos 6 caracteres'); return }
     setLoading(true)
 
     const fakeEmail = `${user}@prode.internal`
@@ -60,7 +60,7 @@ export function Register() {
               type="password" required
               value={password} onChange={(e) => setPassword(e.target.value)}
               className="w-full px-3 py-2.5 rounded-lg bg-slate-900 border border-slate-600 text-slate-200 focus:outline-none focus:border-emerald-500 text-sm"
-              placeholder="Mínimo 4 caracteres"
+              placeholder="Mínimo 6 caracteres"
             />
           </div>
           <button
