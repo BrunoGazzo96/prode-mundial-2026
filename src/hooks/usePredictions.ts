@@ -26,7 +26,7 @@ export function usePredictions(groupId: string | null, userId: string | null) {
     if (!groupId || !userId) return
     const { data } = await supabase
       .from('predictions')
-      .upsert({ user_id: userId, group_id: groupId, match_id: matchId, predicted_home: predictedHome, predicted_away: predictedAway, updated_at: new Date().toISOString() }, { onConflict: 'user_id,match_id' })
+      .upsert({ user_id: userId, group_id: groupId, match_id: matchId, predicted_home: predictedHome, predicted_away: predictedAway, updated_at: new Date().toISOString() }, { onConflict: 'user_id,match_id,group_id' })
       .select()
       .single()
     if (data) setPredictions((prev) => [...prev.filter((p) => p.match_id !== matchId), data])
