@@ -1,6 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { createClient } from '@supabase/supabase-js'
-import { calcMatchPoints } from '../src/lib/scoring.js'
+function calcMatchPoints(ph: number, pa: number, ah: number, aa: number): number {
+  if (ph === ah && pa === aa) return 3
+  if (Math.sign(ph - pa) === Math.sign(ah - aa)) return 1
+  return 0
+}
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
