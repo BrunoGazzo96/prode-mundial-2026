@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { ArrowLeft, Users, Trophy, Calendar, LogOut } from 'lucide-react'
+import { ArrowLeft, Users, Trophy, Calendar, LogOut, RefreshCw } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import { useLeaderboard } from '../hooks/useLeaderboard'
@@ -18,17 +18,22 @@ export function Group() {
   const [group, setGroup] = useState<GroupType | null>(null)
   const [tab, setTab] = useState<Tab>('tabla')
   const [notFound, setNotFound] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [syncing, setSyncing] = useState(false)
 
   const { entries, loading: lbLoading } = useLeaderboard(group?.id ?? null)
   const { matches } = useMatches()
 
   useEffect(() => {
     if (!code || !user) return
-    supabase.from('groups').select('*').eq('invite_code', code.toUpperCase()).single().then(({ data }) => {
+    supabase.from('groups').select('*').eq('invite_code', code.toUpperCase()).single().then(async ({ data }) => {
       if (!data) { setNotFound(true); return }
       setGroup(data)
       // auto-join if not member
-      supabase.from('group_members').upsert({ group_id: data.id, user_id: user.id }, { onConflict: 'group_id,user_id', ignoreDuplicates: true })
+      await supabase.from('group_members').upsert({ group_id: data.id, user_id: user.id }, { onConflict: 'group_id,user_id', ignoreDuplicates: true })
+      // check if admin
+      const { data: member } = await supabase.from('group_members').select('role').eq('group_id', data.id).eq('user_id', user.id).single()
+      setIsAdmin(member?.role === 'admin')
     })
   }, [code, user])
 
@@ -49,6 +54,16 @@ export function Group() {
 
   const upcomingCount = matches.filter((m) => m.status === 'SCHEDULED').length
 
+  async function handleSync() {
+    setSyncing(true)
+    try {
+      await fetch('/api/sync', { method: 'POST' })
+    } finally {
+      setSyncing(false)
+      window.location.reload()
+    }
+  }
+
   return (
     <div className="min-h-screen bg-slate-900">
       {/* Header */}
@@ -67,8 +82,19 @@ export function Group() {
             <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5" /> {entries.length} jugadores</span>
             <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {upcomingCount} partidos por jugar</span>
           </div>
-          <div className="mt-3">
-            <ShareLink inviteCode={group.invite_code} />
+          <div className="mt-3 flex gap-2">
+            <div className="flex-1"><ShareLink inviteCode={group.invite_code} /></div>
+            {isAdmin && (
+              <button
+                onClick={handleSync}
+                disabled={syncing}
+                title="Sincronizar partidos desde football-data.org"
+                className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 disabled:opacity-50 text-slate-300 text-sm transition-colors border border-slate-600"
+              >
+                <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
+                {syncing ? 'Sincronizando...' : 'Sync'}
+              </button>
+            )}
           </div>
         </div>
       </div>

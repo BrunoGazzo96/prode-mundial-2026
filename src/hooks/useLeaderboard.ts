@@ -19,30 +19,28 @@ export function useLeaderboard(groupId: string | null) {
     setLoading(true)
 
     const [membersRes, predictionsRes, championRes] = await Promise.all([
-      supabase
-        .from('group_members')
-        .select('user_id, profiles(display_name)')
-        .eq('group_id', groupId),
-      supabase
-        .from('predictions')
-        .select('user_id, points')
-        .eq('group_id', groupId),
-      supabase
-        .from('champion_predictions')
-        .select('user_id, points')
-        .eq('group_id', groupId),
+      supabase.from('group_members').select('user_id').eq('group_id', groupId),
+      supabase.from('predictions').select('user_id, points').eq('group_id', groupId),
+      supabase.from('champion_predictions').select('user_id, points').eq('group_id', groupId),
     ])
 
     const members = membersRes.data ?? []
     const predictions = predictionsRes.data ?? []
     const champions = championRes.data ?? []
 
+    // Fetch profiles separately (no direct FK between group_members and profiles)
+    const userIds = members.map((m) => m.user_id)
+    const profilesRes = userIds.length > 0
+      ? await supabase.from('profiles').select('id, display_name').in('id', userIds)
+      : { data: [] }
+    const profiles = profilesRes.data ?? []
+
     const result: LeaderboardEntry[] = members.map((m) => {
       const preds = predictions.filter((p) => p.user_id === m.user_id)
       const champ = champions.find((c) => c.user_id === m.user_id)
       const matchPoints = preds.reduce((sum, p) => sum + (p.points ?? 0), 0)
       const championPoints = champ?.points ?? 0
-      const profile = m.profiles as { display_name: string } | null
+      const profile = profiles.find((p) => p.id === m.user_id)
       return {
         userId: m.user_id,
         displayName: profile?.display_name ?? 'Jugador',
