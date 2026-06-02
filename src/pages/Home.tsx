@@ -54,7 +54,6 @@ export function Home() {
       return
     }
 
-    // Check if already a member
     const { data: existing } = await supabase
       .from('group_members')
       .select('id')
@@ -70,27 +69,36 @@ export function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 p-4">
+    <div className="min-h-screen p-4" style={{ background: '#04091a' }}>
       <div className="max-w-md mx-auto pt-8">
+        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-xl font-bold text-slate-100">⚽ Prode Mundial 2026</h1>
-            <p className="text-sm text-slate-400">Hola, <span className="text-emerald-400">{profile?.display_name}</span></p>
+            <h1 className="text-xl font-bold gradient-text">Prode Mundial 2026</h1>
+            <p className="text-sm text-slate-400 mt-0.5">
+              Hola, <span className="text-blue-400 font-medium">{profile?.display_name}</span>
+            </p>
           </div>
-          <button onClick={signOut} className="p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors">
+          <button
+            onClick={signOut}
+            className="p-2 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-700"
+            title="Cerrar sesión"
+          >
             <LogOut className="w-5 h-5" />
           </button>
         </div>
 
         {error && (
-          <div className="mb-4 text-sm text-red-400 bg-red-950/50 border border-red-800/50 rounded-lg px-3 py-2">{error}</div>
+          <div className="mb-4 text-sm text-red-400 bg-red-950/50 border border-red-800/50 rounded-xl px-3 py-2.5">{error}</div>
         )}
 
         <div className="space-y-4">
           {/* Create group */}
-          <div className="bg-slate-800 rounded-2xl p-5 border border-slate-700">
-            <div className="flex items-center gap-2 mb-4">
-              <Plus className="w-5 h-5 text-emerald-400" />
+          <div className="card p-5">
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-blue-600/20 border border-blue-500/40 flex items-center justify-center">
+                <Plus className="w-4 h-4 text-blue-400" />
+              </div>
               <h2 className="font-semibold text-slate-200">Crear grupo</h2>
             </div>
             <form onSubmit={handleCreate} className="space-y-3">
@@ -100,21 +108,29 @@ export function Home() {
                 onChange={(e) => setGroupName(e.target.value)}
                 placeholder="Nombre del grupo (ej: Los pibes)"
                 maxLength={40}
-                className="w-full px-3 py-2.5 rounded-lg bg-slate-900 border border-slate-600 text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 text-sm"
+                className="input-field"
               />
               <button
                 type="submit" disabled={creating || !groupName.trim()}
-                className="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-semibold text-sm transition-colors"
+                className="w-full btn-primary"
               >
                 {creating ? 'Creando...' : 'Crear grupo'}
               </button>
             </form>
           </div>
 
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-px bg-slate-800" />
+            <span className="text-xs text-slate-600 font-medium">O</span>
+            <div className="flex-1 h-px bg-slate-800" />
+          </div>
+
           {/* Join group */}
-          <div className="bg-slate-800 rounded-2xl p-5 border border-slate-700">
-            <div className="flex items-center gap-2 mb-4">
-              <Users className="w-5 h-5 text-blue-400" />
+          <div className="card p-5">
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-violet-600/20 border border-violet-500/40 flex items-center justify-center">
+                <Users className="w-4 h-4 text-violet-400" />
+              </div>
               <h2 className="font-semibold text-slate-200">Unirse a un grupo</h2>
             </div>
             <form onSubmit={handleJoin} className="space-y-3">
@@ -122,15 +138,16 @@ export function Home() {
                 type="text"
                 value={inviteCode}
                 onChange={(e) => setInviteCode(e.target.value)}
-                placeholder="Código de invitación (ej: ABC123)"
+                placeholder="Código de invitación"
                 maxLength={6}
-                className="w-full px-3 py-2.5 rounded-lg bg-slate-900 border border-slate-600 text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-blue-500 text-sm uppercase tracking-widest"
+                className="input-field uppercase tracking-widest"
               />
               <button
                 type="submit" disabled={joining || !inviteCode.trim()}
-                className="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-semibold text-sm transition-colors"
+                className="w-full btn-primary"
+                style={{ background: 'linear-gradient(135deg, #6d28d9, #7c3aed)' }}
               >
-                {joining ? 'Uniéndose...' : 'Unirse'}
+                {joining ? 'Uniéndose...' : 'Unirse al grupo'}
               </button>
             </form>
           </div>

@@ -29,6 +29,8 @@ interface FDMatch {
 function mapStage(stage: string): string {
   const map: Record<string, string> = {
     'GROUP_STAGE': 'GROUP_STAGE',
+    'LAST_32': 'ROUND_OF_32',
+    'LAST_16': 'ROUND_OF_16',
     'ROUND_OF_32': 'ROUND_OF_32',
     'ROUND_OF_16': 'ROUND_OF_16',
     'QUARTER_FINALS': 'QUARTER_FINALS',
@@ -36,7 +38,7 @@ function mapStage(stage: string): string {
     'FINAL': 'FINAL',
     'THIRD_PLACE': 'FINAL',
   }
-  return map[stage] ?? 'GROUP_STAGE'
+  return map[stage] ?? stage
 }
 
 function mapStatus(status: string): string {

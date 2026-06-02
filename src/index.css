@@ -6,7 +6,89 @@
     font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #0f172a;
+    background-color: #04091a;
     color: #f1f5f9;
   }
+
+  * { box-sizing: border-box; }
+}
+
+@layer utilities {
+  .gradient-text {
+    background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .card {
+    background: #0d1b33;
+    border: 1px solid #1e3a5f;
+    border-radius: 1rem;
+  }
+
+  .card-hover {
+    background: #0d1b33;
+    border: 1px solid #1e3a5f;
+    border-radius: 1rem;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .card-hover:hover {
+    border-color: #3b82f6;
+    background: #111f3d;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #1d4ed8, #4f46e5);
+    color: white;
+    font-weight: 600;
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.75rem;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn-gold {
+    background: linear-gradient(135deg, #d97706, #f59e0b);
+    color: white;
+    font-weight: 600;
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.75rem;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn-gold:hover { opacity: 0.9; }
+  .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .input-field {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: #04091a;
+    border: 1px solid #1e3a5f;
+    border-radius: 0.75rem;
+    color: #f1f5f9;
+    font-size: 0.875rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .input-field:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  }
+  .input-field::placeholder { color: #475569; }
+
+  .tab-active {
+    border-bottom: 2px solid #3b82f6;
+    color: #60a5fa;
+  }
+  .tab-inactive {
+    border-bottom: 2px solid transparent;
+    color: #64748b;
+  }
+  .tab-inactive:hover { color: #94a3b8; }
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Copy, Check, Share2 } from 'lucide-react'
+import { Copy, Check, Link2 } from 'lucide-react'
 
 interface Props {
   inviteCode: string
@@ -16,14 +16,18 @@ export function ShareLink({ inviteCode }: Props) {
   }
 
   return (
-    <div className="flex items-center gap-2 p-3 rounded-xl bg-slate-800 border border-slate-700">
-      <Share2 className="w-4 h-4 text-slate-400 shrink-0" />
-      <span className="text-sm text-slate-300 truncate flex-1">{url}</span>
+    <div className="flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-800 bg-slate-900/60">
+      <Link2 className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+      <span className="text-xs text-slate-500 truncate flex-1 font-mono">{inviteCode}</span>
       <button
         onClick={copy}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-emerald-600 hover:bg-emerald-500 text-white transition-colors shrink-0"
+        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all shrink-0 ${
+          copied
+            ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-600/30'
+            : 'bg-blue-600/20 text-blue-400 border border-blue-600/30 hover:bg-blue-600/30'
+        }`}
       >
-        {copied ? <><Check className="w-3.5 h-3.5" /> Copiado</> : <><Copy className="w-3.5 h-3.5" /> Copiar</>}
+        {copied ? <><Check className="w-3 h-3" /> Copiado</> : <><Copy className="w-3 h-3" /> Copiar link</>}
       </button>
     </div>
   )
