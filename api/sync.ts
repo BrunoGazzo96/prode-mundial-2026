@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { createClient } from '@supabase/supabase-js'
-import { calcMatchPoints } from '../src/lib/scoring'
+import { calcMatchPoints } from '../src/lib/scoring.js'
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
