@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Plus, Users, LogOut } from 'lucide-react'
 import { supabase } from '../lib/supabase'
@@ -6,6 +6,13 @@ import { useAuth } from '../contexts/AuthContext'
 
 function generateCode(): string {
   return Math.random().toString(36).substring(2, 8).toUpperCase()
+}
+
+interface MyGroup {
+  id: string
+  name: string
+  invite_code: string
+  role: string
 }
 
 export function Home() {
@@ -16,6 +23,26 @@ export function Home() {
   const [creating, setCreating] = useState(false)
   const [joining, setJoining] = useState(false)
   const [error, setError] = useState('')
+  const [myGroups, setMyGroups] = useState<MyGroup[]>([])
+
+  useEffect(() => {
+    if (!user) return
+    supabase
+      .from('group_members')
+      .select('role, groups(id, name, invite_code)')
+      .eq('user_id', user.id)
+      .then(({ data }) => {
+        if (!data) return
+        setMyGroups(
+          data.map((row: any) => ({
+            id: row.groups.id,
+            name: row.groups.name,
+            invite_code: row.groups.invite_code,
+            role: row.role,
+          }))
+        )
+      })
+  }, [user])
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault()
@@ -90,6 +117,28 @@ export function Home() {
 
         {error && (
           <div className="mb-4 text-sm text-red-400 bg-red-950/50 border border-red-800/50 rounded-xl px-3 py-2.5">{error}</div>
+        )}
+
+        {/* My groups */}
+        {myGroups.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Tus grupos</h2>
+            <div className="space-y-2">
+              {myGroups.map((g) => (
+                <button
+                  key={g.id}
+                  onClick={() => navigate(`/grupo/${g.invite_code}`)}
+                  className="w-full card p-4 flex items-center justify-between hover:border-blue-700/50 transition-colors text-left"
+                >
+                  <div>
+                    <p className="font-semibold text-slate-200">{g.name}</p>
+                    <p className="text-xs text-slate-500 mt-0.5 font-mono">{g.invite_code}</p>
+                  </div>
+                  <span className="text-slate-600 text-sm">›</span>
+                </button>
+              ))}
+            </div>
+          </div>
         )}
 
         <div className="space-y-4">
