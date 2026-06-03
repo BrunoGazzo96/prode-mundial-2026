@@ -1,4 +1,4 @@
-import { Trophy, Target, Star } from 'lucide-react'
+import { Trophy, Target, Star, Hash } from 'lucide-react'
 import type { LeaderboardEntry } from '../hooks/useLeaderboard'
 
 interface Props {
@@ -25,6 +25,9 @@ export function Leaderboard({ entries, currentUserId }: Props) {
           <tr className="border-b border-slate-800 text-xs text-slate-600 uppercase tracking-wider" style={{ background: '#0d1b33' }}>
             <th className="px-4 py-3 text-left w-10">#</th>
             <th className="px-4 py-3 text-left">Jugador</th>
+            <th className="px-4 py-3 text-center hidden sm:table-cell">
+              <span className="flex items-center justify-center gap-1"><Hash className="w-3 h-3" /> Pred.</span>
+            </th>
             <th className="px-4 py-3 text-center hidden sm:table-cell">
               <span className="flex items-center justify-center gap-1"><Target className="w-3 h-3" /> Part.</span>
             </th>
@@ -61,6 +64,7 @@ export function Leaderboard({ entries, currentUserId }: Props) {
                   </span>
                   <span className="ml-2 text-xs text-slate-600 sm:hidden">{entry.predictionsCount} pred.</span>
                 </td>
+                <td className="px-4 py-3 text-center text-slate-400 hidden sm:table-cell text-xs">{entry.predictionsCount}</td>
                 <td className="px-4 py-3 text-center text-slate-400 hidden sm:table-cell text-xs">{entry.matchPoints}</td>
                 <td className="px-4 py-3 text-center hidden sm:table-cell text-xs">
                   <span className={entry.championPoints > 0 ? 'text-amber-400 font-bold' : 'text-slate-700'}>
